@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Web;
 using AffinOuterAPI.BLL.Services;
 using AffinOuterAPI.Client.Requests;
@@ -9,15 +10,22 @@ namespace AffinOuterAPI.Lambdas
 {
     public class GetArticlesFunction : BaseLambdaFunction
     {
-        public APIGatewayProxyResponse GetArticles(GetArticlesRequest getArticlesRequest)
+        public APIGatewayProxyResponse GetArticles(APIGatewayProxyRequest request)
         {
             var articleService = new ArticleService();
 
-            articleService.GetArticles(getArticlesRequest);
+            var getArticlesRequest = JsonConvert.DeserializeObject<GetArticlesRequest>(request.Body);
+
+            var response = articleService.GetArticles(getArticlesRequest);
 
             return new APIGatewayProxyResponse
             {
-                StatusCode = (int)HttpStatusCode.OK
+                StatusCode = (int)HttpStatusCode.OK,
+                Body = response.responseJson,
+                Headers = new Dictionary<string, string>
+                {
+                    {"Content-Type", "application/json"}
+                }
             };
         }
     }

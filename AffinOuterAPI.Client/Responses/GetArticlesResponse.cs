@@ -10,5 +10,7 @@ namespace AffinOuterAPI.Client.Responses
         public bool sort_by_date { get; set; }
         public List<Article> results { get; set; }
         public string search_criteria { get; set; }
+
+        public string responseJson { get; set; }
     }
 }
