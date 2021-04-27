@@ -4,12 +4,12 @@
   "Description": "An AWS Serverless Application.",
   "Resources": 
   {
-    "Get": 
+    "GetArticlesCoreFunction": 
     {
       "Type": "AWS::Serverless::Function",
       "Properties": 
       {
-        "Handler": "AffinOuterAPI::AffinOuterAPI.Lambdas.Functions::Get",
+        "Handler": "AffinOuterAPI::AffinOuterAPI.Lambdas.GetArticlesCoreFunction::GetArticles",
         "Role": null,
         "Policies": 
         [
@@ -23,33 +23,7 @@
             "Type": "Api",
             "Properties": 
             {
-              "Path": "/",
-              "Method": "GET"
-            }
-          }
-        }
-      }
-    },
-    "GetArticlesFunction": 
-    {
-      "Type": "AWS::Serverless::Function",
-      "Properties": 
-      {
-        "Handler": "AffinOuterAPI::AffinOuterAPI.Lambdas.GetArticlesFunction::GetArticles",
-        "Role": null,
-        "Policies": 
-        [
-          "AWSLambdaBasicExecutionRole",
-          "AWSLambdaVPCAccessExecutionRole"
-        ],
-        "Events": 
-        {
-          "RootGet": 
-          {
-            "Type": "Api",
-            "Properties": 
-            {
-              "Path": "/GetArticles",
+              "Path": "/GetArticlesCore",
               "Method": "POST"
             }
           }

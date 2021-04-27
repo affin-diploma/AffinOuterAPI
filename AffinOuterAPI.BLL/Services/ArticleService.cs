@@ -1,7 +1,9 @@
 ﻿using AffinOuterAPI.Client.Requests;
 using AffinOuterAPI.Client.Responses;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,27 +12,36 @@ namespace AffinOuterAPI.BLL.Services
 {
     public class ArticleService
     {
-        public GetArticlesResponse GetArticles(GetArticlesRequest articles)
+        public GetArticlesResponse GetArticles(GetArticlesCoreRequest request)
         {
-            if(articles == null)
+            if (request == null)
             {
-                throw new ArgumentException($"{nameof(GetArticlesRequest)} is null");
+                throw new ArgumentException($"{nameof(GetArticlesCoreRequest)} is null");
             }
-            var responseJson = method(articles.searchQuery);
-            return new GetArticlesResponse()
+            string apiKey = "EhozeN2gOrCRJd6I1AFD7kUHwPYa4ZQm";
+            string apiUrl = "https://core.ac.uk:443/api-v2/search";
+
+            var coreRequest = RequestHelper.ToCoreRequest(request);
+            string queryJson = JsonConvert.SerializeObject(coreRequest);
+
+            var responseJson = ExecuteOuterApiRequest(HttpMethod.Post, apiUrl, apiKey, $"[{queryJson}]").Result;
+
+            var articlesResponse = new GetArticlesResponse();
+            if (responseJson != string.Empty)
             {
-                responseJson = responseJson.Result
-            };
+                var coreResponse = JsonConvert.DeserializeObject<List<CoreResponse>>(responseJson).FirstOrDefault();
+                coreResponse.data = coreResponse.data.Where(x => x._source.downloadUrl != null && x._source.downloadUrl != string.Empty).ToList();
+                articlesResponse = ResponseHelper.ToCoreArticlesResponse(coreResponse);
+            }
+            articlesResponse.request = request;
+            return articlesResponse;
         }
 
-        public async Task<string> method(string query)
+        public async Task<string> ExecuteOuterApiRequest(HttpMethod method, string apiUrl, string apiKey, string query)
         {
-            string apiKey = "";
-            var request = new HttpRequestMessage(HttpMethod.Post,
-                $"https://core.ac.uk:443/api-v2/search?apiKey={apiKey}");
+            var request = new HttpRequestMessage(method, $"{apiUrl}?apiKey={apiKey}");
+            request.Content = new StringContent(query, Encoding.UTF8, "text/plain");
             request.Headers.Add("Accept", "application/json");
-
-            request.Content = new StringContent("[{\"query\":\"" + query + "\"}]", Encoding.UTF8, "text/plain");
             var response = await new HttpClient().SendAsync(request);
 
             if (response.IsSuccessStatusCode)
