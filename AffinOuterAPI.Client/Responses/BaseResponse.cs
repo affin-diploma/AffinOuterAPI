@@ -53,7 +53,7 @@ namespace AffinOuterAPI.Client.Responses
             {
                 status = obj?.status,
                 total = obj?.totalHits,
-                data = obj?.data?.Select(x => ArticleHelper.ToCoreArticle(x?._source)).ToList()
+                data = obj?.data?.Select(x => ArticleHelper.ToArticleFromCore(x?._source)).ToList()
             };
         }
     }

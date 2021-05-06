@@ -11,7 +11,7 @@ namespace AffinOuterAPI.Lambdas
     {
         public APIGatewayProxyResponse GetArticles(APIGatewayProxyRequest request)
         {
-            var getArticlesRequest = JsonConvert.DeserializeObject<GetArticlesCoreRequest>(request.Body);
+            GetArticlesCoreRequest getArticlesRequest = JsonConvert.DeserializeObject<GetArticlesCoreRequest>(request.Body);
 
             try
             {
@@ -22,7 +22,7 @@ namespace AffinOuterAPI.Lambdas
                 return ResponseHelper.ToBadRequestLambdaResponse(ex.Message);
             }
 
-            var resp = new ArticleService().GetArticles(getArticlesRequest);
+            GetArticlesResponse resp = new ArticleService().GetArticles(getArticlesRequest);
             return ResponseHelper.ToOkLambdaResponse(resp);
         }
     }

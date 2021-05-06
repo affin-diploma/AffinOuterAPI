@@ -21,16 +21,17 @@ namespace AffinOuterAPI.BLL.Services
             string apiKey = "EhozeN2gOrCRJd6I1AFD7kUHwPYa4ZQm";
             string apiUrl = "https://core.ac.uk:443/api-v2/search";
 
-            var coreRequest = RequestHelper.ToCoreRequest(request);
+            CoreRequest coreRequest = RequestHelper.ToCoreRequest(request);
+            FilterService coreFilterService = new FilterService(request.filter);
+            coreRequest.query = coreFilterService.FilterCoreRequest(coreRequest.query);
             string queryJson = JsonConvert.SerializeObject(coreRequest);
+            string responseJson = ExecuteOuterApiRequest(HttpMethod.Post, apiUrl, apiKey, $"[{queryJson}]").Result;
 
-            var responseJson = ExecuteOuterApiRequest(HttpMethod.Post, apiUrl, apiKey, $"[{queryJson}]").Result;
-
-            var articlesResponse = new GetArticlesResponse();
+            GetArticlesResponse articlesResponse = new GetArticlesResponse();
             if (responseJson != string.Empty)
             {
-                var coreResponse = JsonConvert.DeserializeObject<List<CoreResponse>>(responseJson).FirstOrDefault();
-                coreResponse.data = coreResponse.data.Where(x => x._source.downloadUrl != null && x._source.downloadUrl != string.Empty).ToList();
+                CoreResponse coreResponse = JsonConvert.DeserializeObject<List<CoreResponse>>(responseJson).FirstOrDefault();
+                coreResponse.data = coreResponse.data.Where(x => x?._source?.downloadUrl != null && x?._source?.downloadUrl != string.Empty).ToList();
                 articlesResponse = ResponseHelper.ToCoreArticlesResponse(coreResponse);
             }
             articlesResponse.request = request;
@@ -39,10 +40,10 @@ namespace AffinOuterAPI.BLL.Services
 
         public async Task<string> ExecuteOuterApiRequest(HttpMethod method, string apiUrl, string apiKey, string query)
         {
-            var request = new HttpRequestMessage(method, $"{apiUrl}?apiKey={apiKey}");
+            HttpRequestMessage request = new HttpRequestMessage(method, $"{apiUrl}?apiKey={apiKey}");
             request.Content = new StringContent(query, Encoding.UTF8, "text/plain");
             request.Headers.Add("Accept", "application/json");
-            var response = await new HttpClient().SendAsync(request);
+            HttpResponseMessage response = await new HttpClient().SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
