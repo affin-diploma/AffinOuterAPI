@@ -22,8 +22,10 @@ namespace AffinOuterAPI.BLL.Services
             string apiUrl = "https://core.ac.uk:443/api-v2/search";
 
             CoreRequest coreRequest = RequestHelper.ToCoreRequest(request);
-            FilterService coreFilterService = new FilterService(request.filter);
-            coreRequest.query = coreFilterService.FilterCoreRequest(coreRequest.query);
+            if(request.filter != null)
+            {
+                coreRequest.query = new FilterService(request.filter).FilterCoreRequest(coreRequest.query);
+            }
             string queryJson = JsonConvert.SerializeObject(coreRequest);
             string responseJson = ExecuteOuterApiRequest(HttpMethod.Post, apiUrl, apiKey, $"[{queryJson}]").Result;
 

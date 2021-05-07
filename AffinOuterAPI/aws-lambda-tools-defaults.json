@@ -13,7 +13,7 @@
     "s3-prefix"     : "AffinOuterAPI/",
     "template"      : "serverless.template",
     "template-parameters" : "",
-    "output-package"      : "C:\\Users\\kostr\\AppData\\Local\\Temp\\GetArticlesCoreFunction-CodeUri-Or-ImageUri-637559457636076578.zip",
+    "output-package"      : "C:\\Users\\kostr\\AppData\\Local\\Temp\\GetArticlesCoreFunction-CodeUri-Or-ImageUri-637559685705657153.zip",
     "disable-version-check" : false,
     "s3-bucket"             : "affin-outer-api",
     "stack-name"            : "AffinOuterAPI"

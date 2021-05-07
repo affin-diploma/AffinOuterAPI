@@ -14,7 +14,7 @@ namespace AffinOuterAPI.BLL.Services
 
         public string FilterCoreRequest(string coreRequest)
         {
-            if (string.IsNullOrEmpty(coreRequest) || _currentFilter == null) return string.Empty;
+            if (string.IsNullOrEmpty(coreRequest) || _currentFilter == null) return coreRequest;
 
             List<string> filterQuery = new List<string>();
 
@@ -51,7 +51,8 @@ namespace AffinOuterAPI.BLL.Services
             
             if(filterQuery.Any())
             {
-                coreRequest += $" {string.Join(" AND ", filterQuery)}";
+                filterQuery.Insert(0, coreRequest);
+                coreRequest = $"{string.Join(" AND ", filterQuery)}";
             }
 
             return coreRequest;
