@@ -34,7 +34,7 @@
                 publisher = obj?.publisher,
                 downloadUrl = obj?.downloadUrl,
                 description = obj?.description,
-                lang = obj?.language?.code,
+                lang = obj?.language?.name,
                 year = obj?.year,
                 relations = obj?.relations,
             };

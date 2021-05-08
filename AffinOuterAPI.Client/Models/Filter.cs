@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
-
-namespace AffinOuterAPI.Client.Models
+﻿namespace AffinOuterAPI.Client.Models
 {
     public class Filter
     {
-        public string title { get; set; }
-        public List<string> topics { get; set; }
+        public string titles { get; set; }
         public string authors { get; set; }
-        public string publisher { get; set; }
-        public string language { get; set; }
-        public string year { get; set; }
+        public string publishers { get; set; }
+        public string languages { get; set; }
+        public string years { get; set; }
 
-        [JsonIgnore]
-        public DateTime? startYear { get; set; }
-        [JsonIgnore]
-        public DateTime? endYear { get; set; }
+        public void Deconstruct(out string titles, out string authors, 
+            out string publishers, out string languages, out string years)
+        {
+            titles = this.titles;
+            authors = this.authors;
+            publishers = this.publishers;
+            languages = this.languages;
+            years = this.years;
+        }
     }
 }

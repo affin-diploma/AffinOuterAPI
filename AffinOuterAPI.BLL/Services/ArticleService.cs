@@ -33,7 +33,7 @@ namespace AffinOuterAPI.BLL.Services
             if (responseJson != string.Empty)
             {
                 CoreResponse coreResponse = JsonConvert.DeserializeObject<List<CoreResponse>>(responseJson).FirstOrDefault();
-                coreResponse.data = coreResponse.data.Where(x => x?._source?.downloadUrl != null && x?._source?.downloadUrl != string.Empty).ToList();
+                coreResponse.data = coreResponse?.data?.Where(x => !string.IsNullOrEmpty(x?._source?.downloadUrl))?.ToList();
                 articlesResponse = ResponseHelper.ToCoreArticlesResponse(coreResponse);
             }
             articlesResponse.request = request;

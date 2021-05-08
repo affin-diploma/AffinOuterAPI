@@ -12,47 +12,64 @@ namespace AffinOuterAPI.BLL.Services
             _currentFilter = filter;
         }
 
+        private bool GetFilterQuery(string codeName, string criterias, out string filterQuery)
+        {
+            filterQuery = string.Empty;
+            if (criterias.Contains("|"))
+            {
+                List<string> criteriasFilter = new List<string>();
+                List<string> splittedCriterias = criterias.Split('|').ToList();
+
+                foreach (string criteria in splittedCriterias)
+                {
+                    if (criteria.Contains("&"))
+                    {
+                        criteriasFilter.Add($"({string.Join(" AND ", criteria.Split('&').Select(x => $"\"{x}\""))})");
+                    }
+                    else criteriasFilter.Add($"\"{criteria}\"");
+                }
+
+                filterQuery = $"{codeName}:({string.Join(" OR ", criteriasFilter)})";
+            }
+            else if (criterias.Contains("&"))
+            {
+                filterQuery = $"{codeName}:({string.Join(" AND ", criterias.Split('&').Select(x => $"\"{x}\""))})";
+            }
+            else
+            {
+                filterQuery = $"{codeName}:(\"{criterias}\")";
+            }
+
+            return !string.IsNullOrEmpty(filterQuery);
+        }
+
         public string FilterCoreRequest(string coreRequest)
         {
             if (string.IsNullOrEmpty(coreRequest) || _currentFilter == null) return coreRequest;
+            (string titles, string authors,
+                string publishers, string languages, string years) = _currentFilter;
 
             List<string> filterQuery = new List<string>();
-
-            if(!string.IsNullOrEmpty(_currentFilter.title))
+            foreach(KeyValuePair<string, string> codeCriteria in new Dictionary<string, string>
             {
-                List<string> titleFilter = new List<string>();
-                List<string> titles = _currentFilter.title.Split(";").ToList();
-                foreach (string title in titles)
+                {"title", $"{coreRequest}|{titles}"},
+                {"authors", authors},
+                {"publisher", publishers},
+                {"language.name", languages},
+                {"year", years}
+            })
+            {
+                if(!string.IsNullOrEmpty(codeCriteria.Key) && 
+                    !string.IsNullOrEmpty(codeCriteria.Value) &&
+                    GetFilterQuery(codeCriteria.Key, codeCriteria.Value, out string filter))
                 {
-                    if (!string.IsNullOrEmpty(title))
-                    {
-                        if (title.Contains(" "))
-                        {
-                            titleFilter.Add($"\"{title}\"");
-                        }
-                        else
-                        {
-                            titleFilter.Add(title);
-                        }
-                    }
+                    filterQuery.Add(filter);
                 }
-
-                filterQuery.Add($"title:({string.Join(" OR ", titleFilter)})");
             }
 
-            if(!string.IsNullOrEmpty(_currentFilter.year))
+            if (filterQuery.Any())
             {
-                filterQuery.Add($"year:{_currentFilter.year}");
-            }
-
-            /// OTHER FILTERS HERE
-            ///--
-            ///--
-            
-            if(filterQuery.Any())
-            {
-                filterQuery.Insert(0, coreRequest);
-                coreRequest = $"{string.Join(" AND ", filterQuery)}";
+                coreRequest = string.Join(" AND ", filterQuery);
             }
 
             return coreRequest;
