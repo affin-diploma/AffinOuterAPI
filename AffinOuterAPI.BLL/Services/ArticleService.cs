@@ -30,6 +30,7 @@ namespace AffinOuterAPI.BLL.Services
 
             GetArticlesResponse articlesResponse = new GetArticlesResponse();
             List<Client.Models.CoreSource> data = new List<Client.Models.CoreSource>();
+            int previousDataCount;
             do
             {
                 string queryJson = JsonConvert.SerializeObject(coreRequest);
@@ -38,22 +39,27 @@ namespace AffinOuterAPI.BLL.Services
                 if (responseJson != string.Empty)
                 {
                     CoreResponse coreResponse = JsonConvert.DeserializeObject<List<CoreResponse>>(responseJson).FirstOrDefault();
-                    data.AddRange(coreResponse?.data?.Where(x => !string.IsNullOrEmpty(x?._source?.downloadUrl))?.ToList());
-                    if (coreRequest.pageSize.HasValue)
+                    previousDataCount = data.Count();
+                    data.AddRange(coreResponse?.data?.Where(x => !string.IsNullOrEmpty(x?._source?.downloadUrl))?.ToList() ?? new List<Client.Models.CoreSource>());
+
+                    if (coreRequest.pageSize.Value < data.Count() || data.Count() == 0 || previousDataCount == data.Count())
                     {
-                        if (coreRequest.pageSize.Value < data.Count())
+                        if(data.Count() == 0)
+                        {
+                            coreResponse.data = new List<Client.Models.CoreSource>();
+                        }
+                        else if(previousDataCount == data.Count())
+                        {
+                            coreResponse.data = data;
+                        }
+                        else
                         {
                             coreResponse.data = data.GetRange(0, coreRequest.pageSize.Value);
-                            articlesResponse = ResponseHelper.ToCoreArticlesResponse(coreResponse);
-                            break;
                         }
-                        else coreRequest.page++;
-                    }
-                    else
-                    {
                         articlesResponse = ResponseHelper.ToCoreArticlesResponse(coreResponse);
                         break;
                     }
+                    else coreRequest.page++;
                 }
             }
             while (true);
