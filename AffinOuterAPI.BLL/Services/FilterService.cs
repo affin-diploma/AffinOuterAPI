@@ -46,7 +46,7 @@ namespace AffinOuterAPI.BLL.Services
         public string FilterCoreRequest(string coreRequest)
         {
             if (string.IsNullOrEmpty(coreRequest) || _currentFilter == null) return coreRequest;
-            (string titles, string authors,
+            (string titles, string topics, string authors,
                 string publishers, string languages, string years) = _currentFilter;
 
             titles = string.IsNullOrEmpty(titles) ? coreRequest : $"{coreRequest}|{titles}";
@@ -54,6 +54,7 @@ namespace AffinOuterAPI.BLL.Services
             foreach (KeyValuePair<string, string> codeCriteria in new Dictionary<string, string>
             {
                 {"title", titles},
+                {"topics", topics},
                 {"authors", authors},
                 {"publisher", publishers},
                 {"language.name", languages},

@@ -22,20 +22,42 @@ namespace AffinOuterAPI.BLL.Services
             string apiUrl = "https://core.ac.uk:443/api-v2/search";
 
             CoreRequest coreRequest = RequestHelper.ToCoreRequest(request);
+
             if(request.filter != null)
             {
                 coreRequest.query = new FilterService(request.filter).FilterCoreRequest(coreRequest.query);
             }
-            string queryJson = JsonConvert.SerializeObject(coreRequest);
-            string responseJson = ExecuteOuterApiRequest(HttpMethod.Post, apiUrl, apiKey, $"[{queryJson}]").Result;
 
             GetArticlesResponse articlesResponse = new GetArticlesResponse();
-            if (responseJson != string.Empty)
+            List<Client.Models.CoreSource> data = new List<Client.Models.CoreSource>();
+            do
             {
-                CoreResponse coreResponse = JsonConvert.DeserializeObject<List<CoreResponse>>(responseJson).FirstOrDefault();
-                coreResponse.data = coreResponse?.data?.Where(x => !string.IsNullOrEmpty(x?._source?.downloadUrl))?.ToList();
-                articlesResponse = ResponseHelper.ToCoreArticlesResponse(coreResponse);
+                string queryJson = JsonConvert.SerializeObject(coreRequest);
+                string responseJson = ExecuteOuterApiRequest(HttpMethod.Post, apiUrl, apiKey, $"[{queryJson}]").Result;
+
+                if (responseJson != string.Empty)
+                {
+                    CoreResponse coreResponse = JsonConvert.DeserializeObject<List<CoreResponse>>(responseJson).FirstOrDefault();
+                    data.AddRange(coreResponse?.data?.Where(x => !string.IsNullOrEmpty(x?._source?.downloadUrl))?.ToList());
+                    if (coreRequest.pageSize.HasValue)
+                    {
+                        if (coreRequest.pageSize.Value < data.Count())
+                        {
+                            coreResponse.data = data.GetRange(0, coreRequest.pageSize.Value);
+                            articlesResponse = ResponseHelper.ToCoreArticlesResponse(coreResponse);
+                            break;
+                        }
+                        else coreRequest.page++;
+                    }
+                    else
+                    {
+                        articlesResponse = ResponseHelper.ToCoreArticlesResponse(coreResponse);
+                        break;
+                    }
+                }
             }
+            while (true);
+
             articlesResponse.request = request;
             return articlesResponse;
         }

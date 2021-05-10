@@ -3,15 +3,17 @@
     public class Filter
     {
         public string titles { get; set; }
+        public string topics { get; set; }
         public string authors { get; set; }
         public string publishers { get; set; }
         public string languages { get; set; }
         public string years { get; set; }
 
-        public void Deconstruct(out string titles, out string authors, 
+        public void Deconstruct(out string titles, out string topics, out string authors, 
             out string publishers, out string languages, out string years)
         {
             titles = this.titles;
+            topics = this.topics;
             authors = this.authors;
             publishers = this.publishers;
             languages = this.languages;
