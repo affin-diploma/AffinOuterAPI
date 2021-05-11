@@ -15,7 +15,7 @@ namespace AffinOuterAPI.Client.Responses
         public string error { get; set; }
         public int? total { get; set; } = 0;
         public List<Article> data { get; set; }
-        public string searchDate { get { return DateTime.Now.ToLocalTime().ToString("yyyy-MM-dd"); } }
+        public string searchDate { get { return (DateTime.Now.ToLocalTime() - new DateTime(1970, 1, 1)).TotalMilliseconds.ToString(); } }
         public BaseRequest request { get; set; }
     }
 

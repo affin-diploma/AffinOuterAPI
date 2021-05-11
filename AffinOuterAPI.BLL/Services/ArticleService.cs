@@ -42,7 +42,8 @@ namespace AffinOuterAPI.BLL.Services
                 {
                     CoreResponse coreResponse = JsonConvert.DeserializeObject<List<CoreResponse>>(responseJson).FirstOrDefault();
                     previousDataCount = data.Count();
-                    data.AddRange(coreResponse?.data?.Where(x => !string.IsNullOrEmpty(x?._source?.downloadUrl))?.GroupBy(x => x._source.downloadUrl)?.Select(x => x.First())?.ToList() ?? new List<CoreSource>());
+                    data.AddRange(coreResponse?.data?.Where(x => !string.IsNullOrEmpty(x?._source?.downloadUrl))?.ToList() ?? new List<CoreSource>());
+                    data = data?.GroupBy(x => x._source.downloadUrl)?.Select(x => x.First())?.ToList() ?? new List<CoreSource>();
                     currentDataCount = coreResponse?.data?.Count() ?? 0;
                     if (coreRequest.pageSize.Value < data.Count() || currentDataCount == 0)
                     {
