@@ -15,7 +15,7 @@ namespace AffinOuterAPI.BLL.Services
         private bool GetFilterQuery(string codeName, string criterias, out string filterQuery)
         {
             filterQuery = string.Empty;
-         
+
             if (criterias.Contains("|"))
             {
                 List<string> criteriasFilter = new List<string>();
@@ -39,7 +39,7 @@ namespace AffinOuterAPI.BLL.Services
             {
                 filterQuery = $"{codeName}:({(criterias.Contains(" ") ? $"\"{criterias}\"" : criterias)})";
             }
-            
+
             return !string.IsNullOrEmpty(filterQuery);
         }
 
@@ -52,14 +52,14 @@ namespace AffinOuterAPI.BLL.Services
             titles = string.IsNullOrEmpty(titles) ? coreRequest : $"{coreRequest}|{titles}";
             List<string> filterQuery = new List<string>();
             foreach (KeyValuePair<string, string> codeCriteria in new Dictionary<string, string>
-            {
-                {"title", titles},
-                {"topics", topics},
-                {"authors", authors},
-                {"publisher", publishers},
-                {"language.name", languages},
-                {"year", years}
-            })
+                {
+                    {"title", titles},
+                    {"topics", topics},
+                    {"authors", authors},
+                    {"publisher", publishers},
+                    {"language.name", languages},
+                    {"year", years}
+                })
             {
                 if (!string.IsNullOrEmpty(codeCriteria.Key) &&
                     !string.IsNullOrEmpty(codeCriteria.Value) &&

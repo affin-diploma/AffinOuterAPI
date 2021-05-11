@@ -1,5 +1,6 @@
 ﻿using AffinOuterAPI.Client.Requests;
 using AffinOuterAPI.Client.Responses;
+using AffinOuterAPI.Client.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -23,14 +24,15 @@ namespace AffinOuterAPI.BLL.Services
 
             CoreRequest coreRequest = RequestHelper.ToCoreRequest(request);
 
-            if(request.filter != null)
+            if (request.filter != null)
             {
                 coreRequest.query = new FilterService(request.filter).FilterCoreRequest(coreRequest.query);
             }
 
             GetArticlesResponse articlesResponse = new GetArticlesResponse();
-            List<Client.Models.CoreSource> data = new List<Client.Models.CoreSource>();
+            List<CoreSource> data = new List<CoreSource>();
             int previousDataCount;
+            int currentDataCount;
             do
             {
                 string queryJson = JsonConvert.SerializeObject(coreRequest);
@@ -40,15 +42,11 @@ namespace AffinOuterAPI.BLL.Services
                 {
                     CoreResponse coreResponse = JsonConvert.DeserializeObject<List<CoreResponse>>(responseJson).FirstOrDefault();
                     previousDataCount = data.Count();
-                    data.AddRange(coreResponse?.data?.Where(x => !string.IsNullOrEmpty(x?._source?.downloadUrl))?.ToList() ?? new List<Client.Models.CoreSource>());
-
-                    if (coreRequest.pageSize.Value < data.Count() || data.Count() == 0 || previousDataCount == data.Count())
+                    data.AddRange(coreResponse?.data?.Where(x => !string.IsNullOrEmpty(x?._source?.downloadUrl))?.GroupBy(x => x._source.downloadUrl)?.Select(x => x.First())?.ToList() ?? new List<CoreSource>());
+                    currentDataCount = coreResponse?.data?.Count() ?? 0;
+                    if (coreRequest.pageSize.Value < data.Count() || currentDataCount == 0)
                     {
-                        if(data.Count() == 0)
-                        {
-                            coreResponse.data = new List<Client.Models.CoreSource>();
-                        }
-                        else if(previousDataCount == data.Count())
+                        if (currentDataCount == 0)
                         {
                             coreResponse.data = data;
                         }
