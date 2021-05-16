@@ -4,14 +4,15 @@ using Amazon.Lambda.APIGatewayEvents;
 using AffinOuterAPI.BLL.Services;
 using AffinOuterAPI.Client.Requests;
 using AffinOuterAPI.Client.Responses;
+using AffinOuterAPI.Client.Models;
 
 namespace AffinOuterAPI.Lambdas
 {
     public class GetArticlesCoreFunction : BaseLambdaFunction
     {
-        public APIGatewayProxyResponse GetArticles(APIGatewayProxyRequest request)
+        public APIGatewayProxyResponse GetArticlesCore(APIGatewayProxyRequest request)
         {
-            GetArticlesCoreRequest getArticlesRequest = JsonConvert.DeserializeObject<GetArticlesCoreRequest>(request.Body);
+            GetArticlesRequest getArticlesRequest = JsonConvert.DeserializeObject<GetArticlesRequest>(request.Body);
 
             try
             {
@@ -22,7 +23,7 @@ namespace AffinOuterAPI.Lambdas
                 return ResponseHelper.ToBadRequestLambdaResponse(ex.Message);
             }
 
-            GetArticlesResponse resp = new ArticleService().GetArticles(getArticlesRequest);
+            GetArticlesResponse resp = ArticleService.GetArticles<CoreRequest, CoreResponse, CoreSource>(getArticlesRequest, ModuleService.CoreApiUrl, ModuleService.CoreApiKey);
             return ResponseHelper.ToOkLambdaResponse(resp);
         }
     }

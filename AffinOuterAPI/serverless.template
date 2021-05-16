@@ -9,7 +9,7 @@
       "Type": "AWS::Serverless::Function",
       "Properties": 
       {
-        "Handler": "AffinOuterAPI::AffinOuterAPI.Lambdas.GetArticlesCoreFunction::GetArticles",
+        "Handler": "AffinOuterAPI::AffinOuterAPI.Lambdas.GetArticlesCoreFunction::GetArticlesCore",
         "Role": null,
         "Policies": 
         [

@@ -11,26 +11,27 @@ using System.Threading.Tasks;
 
 namespace AffinOuterAPI.BLL.Services
 {
-    public class ArticleService
+    public static class ArticleService
     {
-        public GetArticlesResponse GetArticles(GetArticlesCoreRequest request)
+        public static GetArticlesResponse GetArticles<T, K, P>(GetArticlesRequest request, string apiUrl, string apiKey) 
+            where T: CoreRequest
+            where K: CoreResponse
+            where P: CoreSource
         {
             if (request == null)
             {
-                throw new ArgumentException($"{nameof(GetArticlesCoreRequest)} is null");
+                throw new ArgumentException($"{nameof(GetArticlesRequest)} is null");
             }
-            string apiKey = "EhozeN2gOrCRJd6I1AFD7kUHwPYa4ZQm";
-            string apiUrl = "https://core.ac.uk:443/api-v2/search";
 
-            CoreRequest coreRequest = RequestHelper.ToCoreRequest(request);
+            T coreRequest = RequestHelper.ToCoreRequest(request) as T;
 
             if (request.filter != null)
             {
                 coreRequest.query = new FilterService(request.filter).FilterCoreRequest(coreRequest.query);
             }
 
-            GetArticlesResponse articlesResponse = new GetArticlesResponse();
-            List<CoreSource> data = new List<CoreSource>();
+            GetArticlesResponse articlesResponse;
+            List<P> data = new List<P>();
             int previousDataCount;
             int currentDataCount;
             do
@@ -40,20 +41,20 @@ namespace AffinOuterAPI.BLL.Services
 
                 if (responseJson != string.Empty)
                 {
-                    CoreResponse coreResponse = JsonConvert.DeserializeObject<List<CoreResponse>>(responseJson).FirstOrDefault();
+                    K coreResponse = JsonConvert.DeserializeObject<List<K>>(responseJson).FirstOrDefault();
                     previousDataCount = data.Count();
-                    data.AddRange(coreResponse?.data?.Where(x => !string.IsNullOrEmpty(x?._source?.downloadUrl))?.ToList() ?? new List<CoreSource>());
-                    data = data?.GroupBy(x => x._source.downloadUrl)?.Select(x => x.First())?.ToList() ?? new List<CoreSource>();
+                    data.AddRange((coreResponse?.data?.Where(x => !string.IsNullOrEmpty(x?._source?.downloadUrl))?.ToList() as List<P>) ?? new List<P>());
+                    data = data?.GroupBy(x => x._source.downloadUrl)?.Select(x => x.First())?.ToList() ?? new List<P>();
                     currentDataCount = coreResponse?.data?.Count() ?? 0;
                     if (coreRequest.pageSize.Value < data.Count() || currentDataCount == 0)
                     {
                         if (currentDataCount == 0)
                         {
-                            coreResponse.data = data;
+                            coreResponse.data = data as List<CoreSource>;
                         }
                         else
                         {
-                            coreResponse.data = data.GetRange(0, coreRequest.pageSize.Value);
+                            coreResponse.data = (data as List<CoreSource>).GetRange(0, coreRequest.pageSize.Value);
                         }
                         articlesResponse = ResponseHelper.ToCoreArticlesResponse(coreResponse);
                         break;
@@ -67,7 +68,7 @@ namespace AffinOuterAPI.BLL.Services
             return articlesResponse;
         }
 
-        public async Task<string> ExecuteOuterApiRequest(HttpMethod method, string apiUrl, string apiKey, string query)
+        public static async Task<string> ExecuteOuterApiRequest(HttpMethod method, string apiUrl, string apiKey, string query)
         {
             HttpRequestMessage request = new HttpRequestMessage(method, $"{apiUrl}?apiKey={apiKey}");
             request.Content = new StringContent(query, Encoding.UTF8, "text/plain");
