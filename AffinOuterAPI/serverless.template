@@ -9,7 +9,7 @@
       "Type": "AWS::Serverless::Function",
       "Properties": 
       {
-        "Handler": "AffinOuterAPI::AffinOuterAPI.Lambdas.GetArticlesCoreFunction::GetArticlesCore",
+        "Handler": "AffinOuterAPI::AffinOuterAPI.Lambdas.GetArticlesCoreFunction::GetArticles",
         "Role": null,
         "Policies": 
         [
@@ -23,7 +23,33 @@
             "Type": "Api",
             "Properties": 
             {
-              "Path": "/GetArticlesCore",
+              "Path": "/Core/GetArticles",
+              "Method": "POST"
+            }
+          }
+        }
+      }
+    },
+      "GetArticlesScopusFunction": 
+    {
+      "Type": "AWS::Serverless::Function",
+      "Properties": 
+      {
+        "Handler": "AffinOuterAPI::AffinOuterAPI.Lambdas.GetArticlesScopusFunction::GetArticles",
+        "Role": null,
+        "Policies": 
+        [
+          "AWSLambdaBasicExecutionRole",
+          "AWSLambdaVPCAccessExecutionRole"
+        ],
+        "Events": 
+        {
+          "RootGet": 
+          {
+            "Type": "Api",
+            "Properties": 
+            {
+              "Path": "/Scopus/GetArticles",
               "Method": "POST"
             }
           }

@@ -30,5 +30,15 @@ namespace AffinOuterAPI.Client.Requests
                 pageSize = obj?.limit
             };
         }
+
+        public static ScopusRequest ToScopusRequest<T>(T obj) where T : BaseRequest
+        {
+            return new ScopusRequest
+            {
+                query = obj?.searchQuery,
+                start = obj?.offset,
+                count = obj?.limit
+            };
+        }
     }
 }

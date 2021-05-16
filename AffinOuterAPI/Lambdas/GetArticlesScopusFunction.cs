@@ -7,21 +7,22 @@ using System;
 
 namespace AffinOuterAPI.Lambdas
 {
-    public class GetArticlesCoreFunction : BaseLambdaFunction
+    public class GetArticlesScopusFunction : BaseLambdaFunction
     {
         public APIGatewayProxyResponse GetArticles(APIGatewayProxyRequest request)
         {
             BaseRequest getArticlesRequest = JsonConvert.DeserializeObject<BaseRequest>(request.Body);
+
             try
             {
-                ValidationService.ValidateCoreRequest(ref getArticlesRequest);
+                ValidationService.ValidateScopusRequest(ref getArticlesRequest);
             }
             catch (Exception ex)
             {
                 return ResponseHelper.ToBadRequestLambdaResponse(ex.Message);
             }
 
-            return ResponseHelper.ToOkLambdaResponse(ArticleService.GetArticlesCore(getArticlesRequest));
+            return ResponseHelper.ToOkLambdaResponse(ArticleService.GetArticlesScopus(getArticlesRequest));
         }
     }
 }

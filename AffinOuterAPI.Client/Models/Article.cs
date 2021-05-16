@@ -1,4 +1,6 @@
-﻿namespace AffinOuterAPI.Client.Models
+﻿using AffinOuterAPI.Client.Models.Scopus;
+
+namespace AffinOuterAPI.Client.Models
 {
     public class Article : BaseArticle
     {
@@ -23,7 +25,7 @@
             };
         }
 
-        public static Article ToArticleFromCore<T>(T obj) where T : CoreArticle
+        public static Article ToArticle(CoreArticle obj)
         {
             return new Article
             {
@@ -37,6 +39,19 @@
                 lang = obj?.language?.name,
                 year = obj?.year,
                 relations = obj?.relations,
+            };
+        }
+
+        public static Article ToArticle(ScopusArticle obj)
+        {
+            return new Article
+            {
+                id = obj?.id,
+                title = obj?.title,
+                authors = obj?.authors,
+                publisher = obj?.publisher,
+                downloadUrl = obj?.downloadUrl,
+                year = obj?.year?.Year
             };
         }
     }

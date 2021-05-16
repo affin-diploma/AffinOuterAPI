@@ -1,16 +1,21 @@
-﻿using System;
-using AffinOuterAPI.Client.Requests;
+﻿using AffinOuterAPI.Client.Requests;
+using System;
 
 namespace AffinOuterAPI.BLL.Services
 {
     public static class ValidationService
     {
-        public static void ValidateRequest<T>(ref T req) where T: BaseRequest
+        public static void ValidateRequest<T>(ref T req) where T : BaseRequest
         {
             if (req.searchQuery == null || req.searchQuery == string.Empty)
                 throw new ArgumentException("The search request is empty!");
+        }
 
-            if(req.limit < 10 || req.limit > 100)
+        public static void ValidateCoreRequest<T>(ref T req) where T : BaseRequest
+        {
+            ValidateRequest(ref req);
+
+            if (req.limit < 10 || req.limit > 100)
             {
                 if (req.limit < 10)
                 {
@@ -19,13 +24,36 @@ namespace AffinOuterAPI.BLL.Services
                 else req.limit = 100;
             }
 
-            if(req.offset < 1 || req.offset > 100)
+            if (req.offset < 1 || req.offset > 100)
             {
                 if (req.offset < 1)
                 {
                     req.offset = 1;
                 }
                 else req.offset = 100;
+            }
+        }
+
+        public static void ValidateScopusRequest<T>(ref T req) where T : BaseRequest
+        {
+            ValidateRequest(ref req);
+
+            if (req.limit < 1 || req.limit > 25)
+            {
+                if (req.limit < 1)
+                {
+                    req.limit = 1;
+                }
+                else req.limit = 25;
+            }
+
+            if (req.offset < 1 || req.offset > 6000)
+            {
+                if (req.offset < 1)
+                {
+                    req.offset = 1;
+                }
+                else req.offset = 6000;
             }
         }
     }

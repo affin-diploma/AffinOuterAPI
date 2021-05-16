@@ -9,7 +9,7 @@
         public string languages { get; set; }
         public string years { get; set; }
 
-        public void Deconstruct(out string titles, out string topics, out string authors, 
+        public void Deconstruct(out string titles, out string topics, out string authors,
             out string publishers, out string languages, out string years)
         {
             titles = this.titles;
