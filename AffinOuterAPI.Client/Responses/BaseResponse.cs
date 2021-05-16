@@ -17,6 +17,7 @@ namespace AffinOuterAPI.Client.Responses
         public List<Article> data { get; set; }
         public string searchDate { get { return (DateTime.Now.ToLocalTime() - new DateTime(1970, 1, 1)).TotalMilliseconds.ToString(); } }
         public BaseRequest request { get; set; }
+        public string sourceDb { get; set; }
     }
 
     public static class ResponseHelper
@@ -47,9 +48,9 @@ namespace AffinOuterAPI.Client.Responses
             };
         }
 
-        public static GetArticlesResponse ToCoreArticlesResponse<T>(T obj) where T : CoreResponse
+        public static BaseResponse ToBaseResponse<T>(T obj) where T : CoreResponse
         {
-            return new GetArticlesResponse
+            return new BaseResponse
             {
                 status = obj?.status,
                 total = obj?.totalHits,
