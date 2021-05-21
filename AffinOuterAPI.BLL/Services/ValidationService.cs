@@ -5,13 +5,13 @@ namespace AffinOuterAPI.BLL.Services
 {
     public static class ValidationService
     {
-        public static void ValidateRequest<T>(ref T req) where T : BaseRequest
+        public static void ValidateRequest(ref BaseRequest req)
         {
-            if (req.searchQuery == null || req.searchQuery == string.Empty)
+            if (req == null || string.IsNullOrEmpty(req.searchQuery))
                 throw new ArgumentException("The search request is empty!");
         }
 
-        public static void ValidateCoreRequest<T>(ref T req) where T : BaseRequest
+        public static void ValidateCoreRequest(ref BaseRequest req)
         {
             ValidateRequest(ref req);
 
@@ -34,7 +34,7 @@ namespace AffinOuterAPI.BLL.Services
             }
         }
 
-        public static void ValidateScopusRequest<T>(ref T req) where T : BaseRequest
+        public static void ValidateScopusRequest(ref BaseRequest req)
         {
             ValidateRequest(ref req);
 
