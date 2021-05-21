@@ -81,24 +81,27 @@ namespace AffinOuterAPI.Client.Responses
         {
             ScopusResponse response = JsonConvert.DeserializeObject<ScopusResponse>(json);
             List<List<string>> responseAuthorsList = new List<List<string>>();
-            for (int i = 0; i < response.entry.Count; ++i)
+            if(response?.entry != null)
             {
-                ScopusArticle article = response.entry[i];
-                List<string> responseAuthors = new List<string>();
-                JArray authorsList = article?.authorsList?.author as JArray;
-                if (authorsList != null)
+                for (int i = 0; i < response.entry.Count; ++i)
                 {
-                    List<ScopusArticleAuthorElement> authors = JsonConvert.DeserializeObject<List<ScopusArticleAuthorElement>>(authorsList.ToString());
-                    response.entry[i].authors = authors.Select(x => x.author).ToList();
-                }
-                else if (article.authorsList != null && article.authorsList.author != null)
-                {
-                    response.entry[i].authors = new List<string>
+                    ScopusArticle article = response.entry[i];
+                    List<string> responseAuthors = new List<string>();
+                    JArray authorsList = article?.authorsList?.author as JArray;
+                    if (authorsList != null)
                     {
-                        article.authorsList.author.ToString()
-                    };
+                        List<ScopusArticleAuthorElement> authors = JsonConvert.DeserializeObject<List<ScopusArticleAuthorElement>>(authorsList.ToString());
+                        response.entry[i].authors = authors.Select(x => x.author).ToList();
+                    }
+                    else if (article.authorsList != null && article.authorsList.author != null)
+                    {
+                        response.entry[i].authors = new List<string>
+                        {
+                            article.authorsList.author.ToString()
+                        };
+                    }
+                    else response.entry[i].authors = new List<string>();
                 }
-                else response.entry[i].authors = new List<string>();
             }
             return response;
         }
