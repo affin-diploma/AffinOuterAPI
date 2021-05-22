@@ -19,10 +19,11 @@ namespace AffinOuterAPI.BLL.Services
             {
                 if (req.limit < 10)
                 {
-                    req.limit = 10;
+                    req.dbLimit = 10;
                 }
-                else req.limit = 100;
+                else req.dbLimit = 100;
             }
+            else req.dbLimit = req.limit;
 
             if (req.offset < 1 || req.offset > 100)
             {
@@ -42,10 +43,11 @@ namespace AffinOuterAPI.BLL.Services
             {
                 if (req.limit < 1)
                 {
-                    req.limit = 1;
+                    req.dbLimit = 1;
                 }
-                else req.limit = 25;
+                else req.dbLimit = 25;
             }
+            else req.dbLimit = req.limit;
 
             if (req.offset < 1 || req.offset > 241)
             {

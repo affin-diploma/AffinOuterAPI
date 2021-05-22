@@ -30,6 +30,32 @@
         }
       }
     },
+    "GetArticlesCore2Function": 
+    {
+      "Type": "AWS::Serverless::Function",
+      "Properties": 
+      {
+        "Handler": "AffinOuterAPI::AffinOuterAPI.Lambdas.GetArticlesCore2Function::GetArticles",
+        "Role": null,
+        "Policies": 
+        [
+          "AWSLambdaBasicExecutionRole",
+          "AWSLambdaVPCAccessExecutionRole"
+        ],
+        "Events": 
+        {
+          "RootGet": 
+          {
+            "Type": "Api",
+            "Properties": 
+            {
+              "Path": "/Core2/GetArticles",
+              "Method": "POST"
+            }
+          }
+        }
+      }
+    },
       "GetArticlesScopusFunction": 
     {
       "Type": "AWS::Serverless::Function",

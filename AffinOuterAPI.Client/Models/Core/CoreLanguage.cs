@@ -1,4 +1,4 @@
-﻿namespace AffinOuterAPI.Client.Models
+﻿namespace AffinOuterAPI.Client.Models.Core
 {
     public class CoreLanguage
     {

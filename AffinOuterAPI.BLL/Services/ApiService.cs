@@ -11,6 +11,11 @@ namespace AffinOuterAPI.BLL.Services
             return $"{ModuleService.CoreApiUrl}?apiKey={ModuleService.CoreApiKey}";
         }
 
+        private static string BuildCore2RequestUrl()
+        {
+            return ModuleService.Core2ApiUrl;
+        }
+
         private static string BuildScopusSearchRequestUrl(string query)
         {
             return ModuleService.scopusSearchApiUrl.Replace("{query}", query);
@@ -25,6 +30,12 @@ namespace AffinOuterAPI.BLL.Services
         {
             string url = BuildCoreRequestUrl();
             return ExecuteOuterApiRequest(HttpMethod.Post, url, $"[{query}]").Result;
+        }
+
+        public static string ExecuteCore2ApiRequest(string query)
+        {
+            string url = BuildCore2RequestUrl();
+            return ExecuteOuterApiRequest(HttpMethod.Post, url, query).Result;
         }
 
         public static string ExecuteScopusSearchApiRequest(string query)

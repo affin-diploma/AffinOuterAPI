@@ -58,6 +58,16 @@ namespace AffinOuterAPI.Client.Responses
             };
         }
 
+        public static BaseResponse ToBaseResponse(Core2Response obj)
+        {
+            return new BaseResponse
+            {
+                status = "OK",
+                total = obj?.total,
+                data = obj?.results?.Select(x => ArticleHelper.ToArticle(x)).ToList()
+            };
+        }
+
         public static BaseResponse ToBaseResponse(ScopusResponse obj)
         {
             return new BaseResponse
@@ -71,6 +81,11 @@ namespace AffinOuterAPI.Client.Responses
         public static CoreResponse ToCoreResponse(string json)
         {
             return JsonConvert.DeserializeObject<List<CoreResponse>>(json).FirstOrDefault();
+        }
+
+        public static Core2Response ToCore2Response(string json)
+        {
+            return JsonConvert.DeserializeObject<Core2Response>(json);
         }
 
         public static ScopusResponse ToScopusResponse(string json)

@@ -6,6 +6,9 @@
         public const string CoreApiUrl = "https://core.ac.uk:443/api-v2/search";
         public const string CoreApiKey = "EhozeN2gOrCRJd6I1AFD7kUHwPYa4ZQm";
 
+        // Core2
+        public const string Core2ApiUrl = "https://core.ac.uk/search/api/search";
+
         // Scopus
         private const string ScopusBaseApiUrl = "https://api.elsevier.com/content";
         public const string ScopusSearchApiKey = "7f59af901d2d86f78a1fd60c1bf9426a";

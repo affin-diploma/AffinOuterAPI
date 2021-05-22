@@ -1,4 +1,5 @@
 ﻿using AffinOuterAPI.Client.Models.Scopus;
+using System;
 using System.Linq;
 
 namespace AffinOuterAPI.Client.Models
@@ -30,15 +31,16 @@ namespace AffinOuterAPI.Client.Models
         {
             return new Article
             {
+                id = obj?.id,
                 doi = obj?.doi,
                 title = obj?.title,
                 topics = obj?.topics != null && obj.topics.Any() ? obj.topics : null,
                 authors = obj?.authors != null && obj.authors.Any() ? obj.authors : null,
                 publisher = obj?.publisher,
                 downloadUrl = obj?.downloadUrl,
-                description = obj?.description,
+                description = obj?.description ?? (!string.IsNullOrEmpty(obj?.snippet) ? obj.snippet : null),
                 lang = obj?.language?.name,
-                year = obj?.year,
+                year = obj?.year ?? (!string.IsNullOrEmpty(obj?.datePublished) ? (int.TryParse(obj.datePublished, out int year) ? year : DateTime.Parse(obj.datePublished).Year) : (int?)null),
                 relations = obj?.relations != null && obj.relations.Any() ? obj.relations : null,
                 source = "Core"
             };

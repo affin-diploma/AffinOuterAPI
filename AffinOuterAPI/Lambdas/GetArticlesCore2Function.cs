@@ -7,7 +7,7 @@ using System;
 
 namespace AffinOuterAPI.Lambdas
 {
-    public class GetArticlesScopusFunction : BaseLambdaFunction
+    public class GetArticlesCore2Function : BaseLambdaFunction
     {
         public APIGatewayProxyResponse GetArticles(APIGatewayProxyRequest request)
         {
@@ -15,8 +15,8 @@ namespace AffinOuterAPI.Lambdas
             BaseResponse response;
             try
             {
-                ValidationService.ValidateScopusRequest(ref getArticlesRequest);
-                response = ArticleService.GetArticlesScopus(getArticlesRequest);
+                ValidationService.ValidateCoreRequest(ref getArticlesRequest);
+                response = ArticleService.GetArticlesCore2(getArticlesRequest);
             }
             catch (Exception ex)
             {

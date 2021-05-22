@@ -29,26 +29,28 @@ namespace AffinOuterAPI.BLL.Services
             List<CoreSource> data = new List<CoreSource>();
             int previousDataCount;
             int currentDataCount;
+            string responseJson = string.Empty;
             do
             {
                 string queryJson = JsonConvert.SerializeObject(coreRequest);
-                string responseJson = ApiService.ExecuteCoreApiRequest(queryJson);
+                responseJson = ApiService.ExecuteCoreApiRequest(queryJson);
 
                 if (responseJson != string.Empty)
                 {
                     CoreResponse coreResponse = ResponseHelper.ToCoreResponse(responseJson);
 
                     previousDataCount = data.Count;
-                    if(coreResponse != null)
+                    if (coreResponse != null)
                     {
-                        coreResponse.data = coreResponse.data?.Where(x => !string.IsNullOrEmpty(x?._source?.downloadUrl) && 
-                            (string.IsNullOrEmpty(x?._source?.deleted) ||  
-                                x._source.deleted != "DELETED"))?.ToList();
+                        coreResponse.data = coreResponse.data?.Where(x =>
+                            !string.IsNullOrEmpty(x?._source?.downloadUrl) &&
+                            !string.IsNullOrEmpty(x?._source?.deleted) && x._source.deleted != "DELETED" &&
+                            !string.IsNullOrEmpty(x?._source?.doi))?.ToList();
                     }
                     data.AddRange(coreResponse.data ?? new List<CoreSource>());
                     data = data?.GroupBy(x => x._source.downloadUrl)?.Select(x => x.First())?.ToList() ?? new List<CoreSource>();
                     currentDataCount = coreResponse?.data?.Count ?? 0;
-                    if (coreRequest.pageSize.Value <= data.Count || currentDataCount == 0)
+                    if (request.limit.Value <= data.Count || currentDataCount == 0)
                     {
                         if (currentDataCount == 0)
                         {
@@ -56,7 +58,7 @@ namespace AffinOuterAPI.BLL.Services
                         }
                         else
                         {
-                            coreResponse.data = data.GetRange(0, coreRequest.pageSize.Value);
+                            coreResponse.data = data.GetRange(0, request.limit.Value);
                         }
                         articlesResponse = ResponseHelper.ToBaseResponse(coreResponse);
                         break;
@@ -64,7 +66,65 @@ namespace AffinOuterAPI.BLL.Services
                     else coreRequest.page++;
                 }
             }
-            while (true);
+            while (responseJson != string.Empty);
+
+            articlesResponse.request = request;
+            return articlesResponse;
+        }
+
+        public static BaseResponse GetArticlesCore2(BaseRequest request)
+        {
+            if (request == null)
+            {
+                throw new ArgumentException($"{nameof(BaseRequest)} is null");
+            }
+
+            Core2Request coreRequest = RequestHelper.ToCore2Request(request);
+
+            BaseResponse articlesResponse = new BaseResponse();
+            List<CoreArticle> data = new List<CoreArticle>();
+            int previousDataCount;
+            int currentDataCount;
+            string responseJson = string.Empty;
+            do
+            {
+                string queryJson = JsonConvert.SerializeObject(coreRequest, Formatting.None,
+                            new JsonSerializerSettings
+                            {
+                                NullValueHandling = NullValueHandling.Ignore
+                            });
+                responseJson = ApiService.ExecuteCore2ApiRequest(queryJson);
+
+                if (responseJson != string.Empty)
+                {
+                    Core2Response coreResponse = ResponseHelper.ToCore2Response(responseJson);
+
+                    previousDataCount = data.Count;
+                    if (coreResponse != null)
+                    {
+                        coreResponse.results = coreResponse.results?.Where(x =>
+                            !string.IsNullOrEmpty(x?.downloadUrl))?.ToList();
+                    }
+                    data.AddRange(coreResponse.results ?? new List<CoreArticle>());
+                    data = data?.GroupBy(x => x.downloadUrl)?.Select(x => x.First())?.ToList() ?? new List<CoreArticle>();
+                    currentDataCount = coreResponse?.results?.Count ?? 0;
+                    if (request.limit.Value <= data.Count || currentDataCount == 0)
+                    {
+                        if (currentDataCount == 0)
+                        {
+                            coreResponse.results = data;
+                        }
+                        else
+                        {
+                            coreResponse.results = data.GetRange(0, request.limit.Value);
+                        }
+                        articlesResponse = ResponseHelper.ToBaseResponse(coreResponse);
+                        break;
+                    }
+                    else coreRequest.basicQuery.offset++;
+                }
+            }
+            while (responseJson != string.Empty);
 
             articlesResponse.request = request;
             return articlesResponse;
@@ -81,15 +141,16 @@ namespace AffinOuterAPI.BLL.Services
 
             ScopusRequest scopusRequest = RequestHelper.ToScopusRequest(request);
 
-            if (request.filter != null)
-            {
-                scopusRequest.query = new FilterService(request.filter).FilterScopusRequest(scopusRequest.query);
-            }
+            //if (request.filter != null)
+            //{
+            //    scopusRequest.query = new FilterService(request.filter).FilterScopusRequest(scopusRequest.query);
+            //}
 
             BaseResponse articlesResponse = new BaseResponse();
             List<ScopusArticle> data = new List<ScopusArticle>();
             int previousDataCount;
             int currentDataCount;
+            string responseJson = string.Empty;
             do
             {
                 scopusRequest.query = $"all({scopusRequest.query})"
@@ -98,7 +159,7 @@ namespace AffinOuterAPI.BLL.Services
                     .Replace(" ", "+");
 
                 string queryJson = $"&start={(scopusRequest.start - 1) * scopusRequest.count}&count={scopusRequest.count}&query={scopusRequest.query}";
-                string responseJson = ApiService.ExecuteScopusSearchApiRequest(queryJson);
+                responseJson = ApiService.ExecuteScopusSearchApiRequest(queryJson);
 
                 if (responseJson != string.Empty)
                 {
@@ -112,7 +173,7 @@ namespace AffinOuterAPI.BLL.Services
                     data.AddRange(scopusResponse?.entry ?? new List<ScopusArticle>());
                     data = data?.GroupBy(x => x.doi)?.Select(x => x.First())?.ToList() ?? new List<ScopusArticle>();
                     currentDataCount = scopusResponse?.entry?.Count ?? 0;
-                    if (scopusRequest.count.Value <= data.Count || currentDataCount == 0)
+                    if (request.limit.Value <= data.Count || currentDataCount == 0)
                     {
                         if (currentDataCount == 0)
                         {
@@ -120,7 +181,7 @@ namespace AffinOuterAPI.BLL.Services
                         }
                         else
                         {
-                            scopusResponse.entry = data.GetRange(0, scopusRequest.count.Value);
+                            scopusResponse.entry = data.GetRange(0, request.limit.Value);
                         }
 
                         for (int i = 0; i < scopusResponse.entry.Count; i++)
@@ -134,7 +195,7 @@ namespace AffinOuterAPI.BLL.Services
                     else scopusRequest.start++;
                 }
             }
-            while (true);
+            while (responseJson != string.Empty);
 
             articlesResponse.request = request;
             return articlesResponse;

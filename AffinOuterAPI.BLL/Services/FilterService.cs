@@ -88,7 +88,7 @@ namespace AffinOuterAPI.BLL.Services
                     {"topics", topics},
                     {"authors", authors},
                     {"publisher", publishers},
-                    {"language.name", languages},
+                    {"language", languages},
                     {"year", years}
                 })
             {
