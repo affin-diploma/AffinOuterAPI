@@ -1,4 +1,5 @@
 ﻿using AffinOuterAPI.Client.Models.Scopus;
+using System.Linq;
 
 namespace AffinOuterAPI.Client.Models
 {
@@ -13,7 +14,7 @@ namespace AffinOuterAPI.Client.Models
         {
             return new Article
             {
-                id = obj?.id,
+                doi = obj?.doi,
                 title = obj?.title,
                 topics = obj?.topics,
                 authors = obj?.authors,
@@ -29,16 +30,17 @@ namespace AffinOuterAPI.Client.Models
         {
             return new Article
             {
-                id = obj?.id,
+                doi = obj?.doi,
                 title = obj?.title,
-                topics = obj?.topics,
-                authors = obj?.authors,
+                topics = obj?.topics != null && obj.topics.Any() ? obj.topics : null,
+                authors = obj?.authors != null && obj.authors.Any() ? obj.authors : null,
                 publisher = obj?.publisher,
                 downloadUrl = obj?.downloadUrl,
                 description = obj?.description,
                 lang = obj?.language?.name,
                 year = obj?.year,
-                relations = obj?.relations,
+                relations = obj?.relations != null && obj.relations.Any() ? obj.relations : null,
+                source = "Core"
             };
         }
 
@@ -46,12 +48,13 @@ namespace AffinOuterAPI.Client.Models
         {
             return new Article
             {
-                id = obj?.id,
+                doi = obj?.doi,
                 title = obj?.title,
-                authors = obj?.authors,
+                authors = obj?.authors != null && obj.authors.Any() ? obj.authors : null,
                 publisher = obj?.publisher,
                 downloadUrl = obj?.downloadUrl,
-                year = obj?.year?.Year
+                year = obj?.year?.Year,
+                source = "Scopus"
             };
         }
     }

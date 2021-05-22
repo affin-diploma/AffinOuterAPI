@@ -30,7 +30,8 @@ namespace AffinOuterAPI.BLL.Services
         public static string ExecuteScopusSearchApiRequest(string query)
         {
             string url = BuildScopusSearchRequestUrl(query);
-            return ExecuteOuterApiRequest(HttpMethod.Get, url).Result;
+            string resultJson = ExecuteOuterApiRequest(HttpMethod.Get, url).Result;
+            return resultJson.Substring(18, resultJson.LastIndexOf("}") - 18);
         }
 
         //public static string ExecuteScopusDownloadApiRequest(string doi)

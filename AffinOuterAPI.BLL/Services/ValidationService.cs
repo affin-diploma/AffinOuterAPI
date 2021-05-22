@@ -47,13 +47,13 @@ namespace AffinOuterAPI.BLL.Services
                 else req.limit = 25;
             }
 
-            if (req.offset < 1 || req.offset > 6000)
+            if (req.offset < 1 || req.offset > 241)
             {
                 if (req.offset < 1)
                 {
                     req.offset = 1;
                 }
-                else req.offset = 6000;
+                else req.offset = 241;
             }
         }
     }

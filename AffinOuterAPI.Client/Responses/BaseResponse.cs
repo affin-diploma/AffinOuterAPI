@@ -14,12 +14,10 @@ namespace AffinOuterAPI.Client.Responses
     public class BaseResponse
     {
         public string status { get; set; }
-        public string error { get; set; }
         public int? total { get; set; } = 0;
         public List<Article> data { get; set; }
         public string searchDate { get { return Math.Truncate((DateTime.Now.ToLocalTime() - new DateTime(1970, 1, 1)).TotalMilliseconds).ToString(); } }
         public BaseRequest request { get; set; }
-        public string sourceDb { get; set; }
     }
 
     public static class ResponseHelper
@@ -56,8 +54,7 @@ namespace AffinOuterAPI.Client.Responses
             {
                 status = obj?.status,
                 total = obj?.totalHits,
-                data = obj?.data?.Select(x => ArticleHelper.ToArticle(x?._source)).ToList(),
-                sourceDb = "Core"
+                data = obj?.data?.Select(x => ArticleHelper.ToArticle(x?._source)).ToList()
             };
         }
 
@@ -67,8 +64,7 @@ namespace AffinOuterAPI.Client.Responses
             {
                 status = "OK",
                 total = obj?.totalResults != null ? int.Parse(obj.totalResults) : 0,
-                data = obj?.entry?.Select(x => ArticleHelper.ToArticle(x)).ToList(),
-                sourceDb = "Scopus"
+                data = obj?.entry?.Select(x => ArticleHelper.ToArticle(x)).ToList()
             };
         }
 
