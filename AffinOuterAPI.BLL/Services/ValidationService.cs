@@ -35,6 +35,30 @@ namespace AffinOuterAPI.BLL.Services
             }
         }
 
+        public static void ValidateCore2Request(ref BaseRequest req)
+        {
+            ValidateRequest(ref req);
+
+            if (req.limit < 10 || req.limit > 100)
+            {
+                if (req.limit < 10)
+                {
+                    req.dbLimit = 10;
+                }
+                else req.dbLimit = 100;
+            }
+            else req.dbLimit = req.limit;
+
+            if (req.offset < 0 || req.offset > 100)
+            {
+                if (req.offset < 0)
+                {
+                    req.offset = 0;
+                }
+                else req.offset = 100;
+            }
+        }
+
         public static void ValidateScopusRequest(ref BaseRequest req)
         {
             ValidateRequest(ref req);

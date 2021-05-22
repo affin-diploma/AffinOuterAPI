@@ -7,7 +7,7 @@ namespace AffinOuterAPI.Client.Requests
     public class BaseRequest
     {
         public string searchQuery { get; set; }
-        public int? offset { get; set; } = 1;
+        public int? offset { get; set; } = 0;
         public int? limit { get; set; } = 10;
         public int? dbLimit { get; set; } = 10;
         public Filter filter { get; set; }

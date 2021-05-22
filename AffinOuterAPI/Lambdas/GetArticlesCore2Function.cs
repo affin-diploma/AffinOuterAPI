@@ -15,7 +15,7 @@ namespace AffinOuterAPI.Lambdas
             BaseResponse response;
             try
             {
-                ValidationService.ValidateCoreRequest(ref getArticlesRequest);
+                ValidationService.ValidateCore2Request(ref getArticlesRequest);
                 response = ArticleService.GetArticlesCore2(getArticlesRequest);
             }
             catch (Exception ex)
