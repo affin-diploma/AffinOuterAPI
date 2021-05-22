@@ -30,6 +30,7 @@ namespace AffinOuterAPI.BLL.Services
             int previousDataCount;
             int currentDataCount;
             string responseJson = string.Empty;
+
             do
             {
                 string queryJson = JsonConvert.SerializeObject(coreRequest);
@@ -47,9 +48,11 @@ namespace AffinOuterAPI.BLL.Services
                             !string.IsNullOrEmpty(x?._source?.deleted) && x._source.deleted != "DELETED" &&
                             !string.IsNullOrEmpty(x?._source?.doi))?.ToList();
                     }
+
                     data.AddRange(coreResponse.data ?? new List<CoreSource>());
                     data = data?.GroupBy(x => x._source.downloadUrl)?.Select(x => x.First())?.ToList() ?? new List<CoreSource>();
                     currentDataCount = coreResponse?.data?.Count ?? 0;
+
                     if (request.limit.Value <= data.Count || currentDataCount == 0)
                     {
                         if (currentDataCount == 0)
@@ -60,6 +63,7 @@ namespace AffinOuterAPI.BLL.Services
                         {
                             coreResponse.data = data.GetRange(0, request.limit.Value);
                         }
+
                         articlesResponse = ResponseHelper.ToBaseResponse(coreResponse);
                         break;
                     }
@@ -81,20 +85,27 @@ namespace AffinOuterAPI.BLL.Services
 
             Core2Request coreRequest = RequestHelper.ToCore2Request(request);
 
+            if (request.filter != null)
+            {
+                coreRequest.basicQuery.searchCriteria = new FilterService(request.filter)
+                    .FilterCore2Request(coreRequest.basicQuery.searchCriteria);
+            }
+
             BaseResponse articlesResponse = new BaseResponse();
             List<CoreArticle> data = new List<CoreArticle>();
             int previousDataCount;
             int currentDataCount;
             string responseJson = string.Empty;
+
             do
             {
                 string queryJson = JsonConvert.SerializeObject(coreRequest, Formatting.None,
-                            new JsonSerializerSettings
-                            {
-                                NullValueHandling = NullValueHandling.Ignore
-                            });
-                responseJson = ApiService.ExecuteCore2ApiRequest(queryJson);
+                    new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore
+                    });
 
+                responseJson = ApiService.ExecuteCore2ApiRequest(queryJson);
                 if (responseJson != string.Empty)
                 {
                     Core2Response coreResponse = ResponseHelper.ToCore2Response(responseJson);
@@ -105,9 +116,11 @@ namespace AffinOuterAPI.BLL.Services
                         coreResponse.results = coreResponse.results?.Where(x =>
                             !string.IsNullOrEmpty(x?.downloadUrl))?.ToList();
                     }
+
                     data.AddRange(coreResponse.results ?? new List<CoreArticle>());
                     data = data?.GroupBy(x => x.downloadUrl)?.Select(x => x.First())?.ToList() ?? new List<CoreArticle>();
                     currentDataCount = coreResponse?.results?.Count ?? 0;
+
                     if (request.limit.Value <= data.Count || currentDataCount == 0)
                     {
                         if (currentDataCount == 0)
@@ -118,6 +131,7 @@ namespace AffinOuterAPI.BLL.Services
                         {
                             coreResponse.results = data.GetRange(0, request.limit.Value);
                         }
+
                         articlesResponse = ResponseHelper.ToBaseResponse(coreResponse);
                         break;
                     }
@@ -166,7 +180,7 @@ namespace AffinOuterAPI.BLL.Services
                     ScopusResponse scopusResponse = ResponseHelper.ToScopusResponse(responseJson);
 
                     previousDataCount = data.Count;
-                    if(scopusResponse != null)
+                    if (scopusResponse != null)
                     {
                         scopusResponse.entry = scopusResponse.entry?.Where(x => !string.IsNullOrEmpty(x?.doi))?.ToList();
                     }

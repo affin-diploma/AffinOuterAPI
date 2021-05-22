@@ -1,5 +1,4 @@
 ﻿using AffinOuterAPI.Client.Models;
-using AffinOuterAPI.Client.Models.Core;
 using System.Linq;
 
 namespace AffinOuterAPI.Client.Requests
@@ -37,24 +36,38 @@ namespace AffinOuterAPI.Client.Requests
 
         public static Core2Request ToCore2Request<T>(T obj) where T : BaseRequest
         {
+            string[] fromTo = new string[2];
+
+            if (obj?.filter?.years != null)
+            {
+                char[] delimeters = new char[] { '&', '|', '-' };
+                obj.filter.years = obj.filter.years.Replace("<", "").Replace(">", "");
+                fromTo = obj.filter.years.Split(delimeters);
+            }
+
             return new Core2Request
             {
-                basicQuery = new Query
+                basicQuery = new CoreQuery
                 {
                     searchCriteria = obj?.searchQuery,
                     count = obj?.dbLimit,
-                    offset = obj?.offset
+                    offset = obj?.offset,
+                    sortByDate = false
                 },
-                facetMap = new CoreFilter
+                facetMap = new CoreFacetMap
                 {
+                    repositories = obj?.filter?.repositories?.Split("|")?.Select(x => new CoreRepository
+                    {
+                        name = x
+                    })?.ToList(),
                     languages = obj?.filter?.languages?.Split("|")?.Select(x => new CoreLanguage
                     {
                         code = x.Substring(0, 2).ToLowerInvariant()
                     })?.ToList(),
                     year = new CoreYear
                     {
-                        currentMin = obj?.filter?.years != null ? int.Parse(obj?.filter?.years?.Replace("<", "").Replace(">", "").Split("&")[0]) : (int?)null,
-                        currentMax = obj?.filter?.years != null ? int.Parse(obj?.filter?.years?.Replace("<", "").Replace(">", "").Split("&")[1]) : (int?)null
+                        currentMin = fromTo.Any() ? int.Parse(fromTo[0]) : (int?)null,
+                        currentMax = fromTo.Any() ? int.Parse(fromTo[1]) : (int?)null,
                     }
                 }
             };

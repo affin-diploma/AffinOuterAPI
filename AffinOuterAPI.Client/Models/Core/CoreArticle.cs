@@ -1,4 +1,4 @@
-﻿using AffinOuterAPI.Client.Models.Core;
+﻿using AffinOuterAPI.Client.Requests;
 
 namespace AffinOuterAPI.Client.Models
 {

@@ -35,6 +35,11 @@ namespace AffinOuterAPI.BLL.Services
             {
                 filterQuery = $"{codeName}:({string.Join(" AND ", criterias.Split('&').Select(x => x.Contains(" ") ? $"\"{x}\"" : x))})";
             }
+            else if (criterias.Contains("-"))
+            {
+                string[] fromTo = criterias.Split("-");
+                filterQuery = $"{codeName}:[{fromTo[0]} TO {fromTo[1]}]";
+            }
             else
             {
                 filterQuery = $"{codeName}:({(criterias.Contains(" ") ? $"\"{criterias}\"" : criterias)})";
@@ -78,7 +83,7 @@ namespace AffinOuterAPI.BLL.Services
         {
             if (string.IsNullOrEmpty(coreRequest) || _currentFilter == null) return coreRequest;
             (string titles, string topics, string authors,
-                string publishers, string languages, string years) = _currentFilter;
+                string publishers, string repositories, string languages, string years) = _currentFilter;
 
             titles = string.IsNullOrEmpty(titles) ? coreRequest : $"{coreRequest}|{titles}";
             List<string> filterQuery = new List<string>();
@@ -107,11 +112,43 @@ namespace AffinOuterAPI.BLL.Services
 
             return coreRequest;
         }
+
+        public string FilterCore2Request(string coreRequest)
+        {
+            if (string.IsNullOrEmpty(coreRequest) || _currentFilter == null) return coreRequest;
+            (string titles, string topics, string authors,
+                string publishers, string repositories, string languages, string years) = _currentFilter;
+
+            List<string> filterQuery = new List<string>();
+            foreach (KeyValuePair<string, string> codeCriteria in new Dictionary<string, string>
+                {
+                    {"year", years},
+                    {"author", authors},
+                    {"publisher", publishers},
+                    {"repository", repositories},
+                })
+            {
+                if (!string.IsNullOrEmpty(codeCriteria.Key) &&
+                    !string.IsNullOrEmpty(codeCriteria.Value) &&
+                    GetCoreFilterQuery(codeCriteria.Key, codeCriteria.Value, out string filter))
+                {
+                    filterQuery.Add(filter);
+                }
+            }
+
+            if (filterQuery.Any())
+            {
+                coreRequest = $"({coreRequest}) AND {string.Join(" AND ", filterQuery)}";
+            }
+
+            return coreRequest;
+        }
+
         public string FilterScopusRequest(string coreRequest)
         {
             if (string.IsNullOrEmpty(coreRequest) || _currentFilter == null) return coreRequest;
             (string titles, string topics, string authors,
-                string publishers, string languages, string years) = _currentFilter;
+                 string publishers, string repositories, string languages, string years) = _currentFilter;
 
             titles = string.IsNullOrEmpty(titles) ? coreRequest : $"{coreRequest}|{titles}";
             List<string> filterQuery = new List<string>();
