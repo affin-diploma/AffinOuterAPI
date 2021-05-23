@@ -27,6 +27,7 @@ namespace AffinOuterAPI.BLL.Services
 
             BaseResponse articlesResponse = new BaseResponse();
             List<CoreSource> data = new List<CoreSource>();
+
             int previousDataCount;
             int currentDataCount;
             string responseJson = string.Empty;
@@ -55,14 +56,7 @@ namespace AffinOuterAPI.BLL.Services
 
                     if (request.limit.Value <= data.Count || currentDataCount == 0)
                     {
-                        if (currentDataCount == 0)
-                        {
-                            coreResponse.data = data;
-                        }
-                        else
-                        {
-                            coreResponse.data = data.GetRange(0, request.limit.Value);
-                        }
+                        coreResponse.data = currentDataCount == 0 ? data : data.GetRange(0, request.limit.Value);
 
                         articlesResponse = ResponseHelper.ToBaseResponse(coreResponse);
                         break;
@@ -123,14 +117,7 @@ namespace AffinOuterAPI.BLL.Services
 
                     if (request.limit.Value <= data.Count || currentDataCount == 0)
                     {
-                        if (currentDataCount == 0)
-                        {
-                            coreResponse.results = data;
-                        }
-                        else
-                        {
-                            coreResponse.results = data.GetRange(0, request.limit.Value);
-                        }
+                        coreResponse.results = currentDataCount == 0 ? data : data.GetRange(0, request.limit.Value);
 
                         articlesResponse = ResponseHelper.ToBaseResponse(coreResponse);
                         break;
@@ -150,21 +137,24 @@ namespace AffinOuterAPI.BLL.Services
             {
                 throw new ArgumentException($"{nameof(BaseRequest)} is null");
             }
+
             string doi = string.Empty;
             string query = string.Empty;
 
             ScopusRequest scopusRequest = RequestHelper.ToScopusRequest(request);
 
-            //if (request.filter != null)
-            //{
-            //    scopusRequest.query = new FilterService(request.filter).FilterScopusRequest(scopusRequest.query);
-            //}
+            if (request.filter != null)
+            {
+                scopusRequest.query = new FilterService(request.filter).FilterScopusRequest(scopusRequest.query);
+            }
 
             BaseResponse articlesResponse = new BaseResponse();
             List<ScopusArticle> data = new List<ScopusArticle>();
+
             int previousDataCount;
             int currentDataCount;
             string responseJson = string.Empty;
+
             do
             {
                 scopusRequest.query = $"all({scopusRequest.query})"
@@ -184,25 +174,21 @@ namespace AffinOuterAPI.BLL.Services
                     {
                         scopusResponse.entry = scopusResponse.entry?.Where(x => !string.IsNullOrEmpty(x?.doi))?.ToList();
                     }
+
                     data.AddRange(scopusResponse?.entry ?? new List<ScopusArticle>());
                     data = data?.GroupBy(x => x.doi)?.Select(x => x.First())?.ToList() ?? new List<ScopusArticle>();
                     currentDataCount = scopusResponse?.entry?.Count ?? 0;
+
                     if (request.limit.Value <= data.Count || currentDataCount == 0)
                     {
-                        if (currentDataCount == 0)
-                        {
-                            scopusResponse.entry = data;
-                        }
-                        else
-                        {
-                            scopusResponse.entry = data.GetRange(0, request.limit.Value);
-                        }
+                        scopusResponse.entry = currentDataCount == 0 ? data : data.GetRange(0, request.limit.Value);
 
                         for (int i = 0; i < scopusResponse.entry.Count; i++)
                         {
                             ScopusArticle article = scopusResponse.entry[i];
                             scopusResponse.entry[i].downloadUrl = ApiService.BuildScopusDownloadRequestUrl(article.doi);
                         }
+
                         articlesResponse = ResponseHelper.ToBaseResponse(scopusResponse);
                         break;
                     }

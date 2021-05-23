@@ -65,15 +65,20 @@ namespace AffinOuterAPI.BLL.Services
                     }
                     else criteriasFilter.Add(criteria.Contains(" ") ? $"\"{criteria}\"" : criteria);
                 }
-                filterQuery = $"{codeName}:({string.Join(" OR ", criteriasFilter)})";
+                filterQuery = $"{codeName}({string.Join(" OR ", criteriasFilter)})";
             }
             else if (criterias.Contains("&"))
             {
-                filterQuery = $"{codeName}:({string.Join(" AND ", criterias.Split('&').Select(x => x.Contains(" ") ? $"\"{x}\"" : x))})";
+                filterQuery = $"{codeName}({string.Join(" AND ", criterias.Split('&').Select(x => x.Contains(" ") ? $"\"{x}\"" : x))})";
+            }
+            else if (criterias.Contains("-"))
+            {
+                string[] fromTo = criterias.Split("-");
+                filterQuery = $"{codeName}(>{fromTo[0]} AND <{fromTo[1]})";
             }
             else
             {
-                filterQuery = $"{codeName}:({(criterias.Contains(" ") ? $"\"{criterias}\"" : criterias)})";
+                filterQuery = $"{codeName}({(criterias.Contains(" ") ? $"\"{criterias}\"" : criterias)})";
             }
 
             return !string.IsNullOrEmpty(filterQuery);
@@ -154,12 +159,11 @@ namespace AffinOuterAPI.BLL.Services
             List<string> filterQuery = new List<string>();
             foreach (KeyValuePair<string, string> codeCriteria in new Dictionary<string, string>
                 {
-                    {"title", titles},
-                    {"topics", topics},
-                    {"authors", authors},
-                    {"publisher", publishers},
-                    {"language.name", languages},
-                    {"year", years}
+                    {"Srctitleplus", titles},
+                    {"tak", $"{topics}&{publishers}&{repositories}"},
+                    {"aut", authors},
+                    {"abs", languages},
+                    {"pub-date", years}
                 })
             {
                 if (!string.IsNullOrEmpty(codeCriteria.Key) &&
