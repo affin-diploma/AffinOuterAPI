@@ -38,11 +38,24 @@ namespace AffinOuterAPI.Client.Requests
         {
             string[] fromTo = new string[2];
 
+            CoreYear yearFilter = null;
+
             if (obj?.filter?.years != null)
             {
                 char[] delimeters = new char[] { '&', '|', '-' };
                 obj.filter.years = obj.filter.years.Replace("<", "").Replace(">", "");
                 fromTo = obj.filter.years.Split(delimeters);
+
+                if (fromTo.Length > 2 &&
+                    int.TryParse(fromTo[0], out int currentMin) &&
+                    int.TryParse(fromTo[1], out int currentMax))
+                {
+                    yearFilter = new CoreYear
+                    {
+                        currentMin = currentMin,
+                        currentMax = currentMax
+                    };
+                }
             }
 
             return new Core2Request
@@ -64,11 +77,7 @@ namespace AffinOuterAPI.Client.Requests
                     {
                         code = x.Substring(0, 2).ToLowerInvariant()
                     })?.ToList(),
-                    year = new CoreYear
-                    {
-                        currentMin = fromTo.Any() ? int.Parse(fromTo[0]) : (int?)null,
-                        currentMax = fromTo.Any() ? int.Parse(fromTo[1]) : (int?)null,
-                    }
+                    year = yearFilter
                 }
             };
         }
