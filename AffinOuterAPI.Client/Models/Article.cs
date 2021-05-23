@@ -38,7 +38,7 @@ namespace AffinOuterAPI.Client.Models
                 authors = obj?.authors != null && obj.authors.Any() ? obj.authors : null,
                 publisher = obj?.publisher,
                 downloadUrl = obj?.downloadUrl,
-                description = obj?.description ?? (!string.IsNullOrEmpty(obj?.snippet) ? obj.snippet : null),
+                description = obj?.description ?? obj?.snippet,
                 lang = obj?.language?.name,
                 year = obj?.year ?? (!string.IsNullOrEmpty(obj?.datePublished) ? (int.TryParse(obj.datePublished, out int year) ? year : DateTime.Parse(obj.datePublished).Year) : (int?)null),
                 relations = obj?.relations != null && obj.relations.Any() ? obj.relations : null,
