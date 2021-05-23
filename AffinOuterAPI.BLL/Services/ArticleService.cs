@@ -147,6 +147,7 @@ namespace AffinOuterAPI.BLL.Services
             {
                 scopusRequest.query = new FilterService(request.filter).FilterScopusRequest(scopusRequest.query);
             }
+            else scopusRequest.query = $"all({scopusRequest.query})".Replace("(", "%28").Replace(")", "%29").Replace(" ", "+");
 
             BaseResponse articlesResponse = new BaseResponse();
             List<ScopusArticle> data = new List<ScopusArticle>();
@@ -157,11 +158,6 @@ namespace AffinOuterAPI.BLL.Services
 
             do
             {
-                scopusRequest.query = $"all({scopusRequest.query})"
-                    .Replace("(", "%28")
-                    .Replace(")", "%29")
-                    .Replace(" ", "+");
-
                 string queryJson = $"&start={(scopusRequest.start - 1) * scopusRequest.count}&count={scopusRequest.count}&query={scopusRequest.query}";
                 responseJson = ApiService.ExecuteScopusSearchApiRequest(queryJson);
 
