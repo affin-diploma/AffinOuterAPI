@@ -31,6 +31,7 @@ namespace AffinOuterAPI.BLL.Services
             int previousDataCount;
             int currentDataCount;
             string responseJson = string.Empty;
+            int pageSize = coreRequest.pageSize ?? 10;
 
             do
             {
@@ -61,7 +62,11 @@ namespace AffinOuterAPI.BLL.Services
                         articlesResponse = ResponseHelper.ToBaseResponse(coreResponse);
                         break;
                     }
-                    else coreRequest.page++;
+                    else
+                    {
+                        coreRequest.page++;
+                        coreRequest.pageSize = pageSize * 2;
+                    };
                 }
             }
             while (responseJson != string.Empty);
@@ -147,7 +152,11 @@ namespace AffinOuterAPI.BLL.Services
             {
                 scopusRequest.query = new FilterService(request.filter).FilterScopusRequest(scopusRequest.query);
             }
-            else scopusRequest.query = $"all({scopusRequest.query})".Replace("(", "%28").Replace(")", "%29").Replace(" ", "+");
+            else scopusRequest.query = $"all( {scopusRequest.query} )";
+
+            scopusRequest.query = scopusRequest.query
+                .Replace("(", "%28")
+                .Replace(")", "%29");
 
             BaseResponse articlesResponse = new BaseResponse();
             List<ScopusArticle> data = new List<ScopusArticle>();

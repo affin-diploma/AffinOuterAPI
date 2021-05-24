@@ -7,7 +7,7 @@ using System;
 
 namespace AffinOuterAPI.Lambdas
 {
-    public class GetArticlesCore2Function : BaseLambdaFunction
+    public class GetArticlesCore2Function : BaseLambdaFunction, IGetArticlesInterface
     {
         public APIGatewayProxyResponse GetArticles(APIGatewayProxyRequest request)
         {

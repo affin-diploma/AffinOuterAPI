@@ -25,24 +25,40 @@ namespace AffinOuterAPI.BLL.Services
                 {
                     if (criteria.Contains("&"))
                     {
-                        criteriasFilter.Add($"({string.Join(" AND ", criteria.Split('&').Select(x => x.Contains(" ") ? $"\"{x}\"" : x))})");
+                        criteriasFilter.Add($"({string.Join(" AND ", criteria.Split('&').Where(x => !string.IsNullOrEmpty(x)).Select(x => x.Contains(" ") ? $"\"{x}\"" : x))})");
                     }
                     else criteriasFilter.Add(criteria.Contains(" ") ? $"\"{criteria}\"" : criteria);
                 }
-                filterQuery = $"{codeName}:({string.Join(" OR ", criteriasFilter)})";
+
+                string joinedFilter = string.Join(" OR ", criteriasFilter.Where(x => !string.IsNullOrEmpty(x)));
+                if (!string.IsNullOrEmpty(joinedFilter))
+                {
+                    filterQuery = $"{codeName}:({joinedFilter})";
+                }
             }
             else if (criterias.Contains("&"))
             {
-                filterQuery = $"{codeName}:({string.Join(" AND ", criterias.Split('&').Select(x => x.Contains(" ") ? $"\"{x}\"" : x))})";
+                string joinedFilter = string.Join(" AND ", criterias.Split('&').Where(x => !string.IsNullOrEmpty(x)).Select(x => x.Contains(" ") ? $"\"{x}\"" : x));
+                if (!string.IsNullOrEmpty(joinedFilter))
+                {
+                    filterQuery = $"{codeName}:({joinedFilter})";
+                }
             }
             else if (criterias.Contains("-"))
             {
                 string[] fromTo = criterias.Split("-");
-                filterQuery = $"{codeName}:[{fromTo[0]} TO {fromTo[1]}]";
+                if (fromTo.Length > 1)
+                {
+                    filterQuery = $"{codeName}:[{fromTo[0]} TO {fromTo[1]}]";
+                }
             }
             else
             {
-                filterQuery = $"{codeName}:({(criterias.Contains(" ") ? $"\"{criterias}\"" : criterias)})";
+                string joinedFilter = criterias.Contains(" ") ? $"\"{criterias}\"" : criterias;
+                if (!string.IsNullOrEmpty(joinedFilter))
+                {
+                    filterQuery = $"{codeName}:({joinedFilter})";
+                }
             }
 
             return !string.IsNullOrEmpty(filterQuery);
@@ -61,24 +77,40 @@ namespace AffinOuterAPI.BLL.Services
                 {
                     if (criteria.Contains("&"))
                     {
-                        criteriasFilter.Add($"({string.Join(" AND ", criteria.Split('&').Select(x => x.Contains(" ") ? $"\"{x}\"" : x))})");
+                        criteriasFilter.Add($"( {string.Join(" AND ", criteria.Split('&').Where(x => !string.IsNullOrEmpty(x)).Select(x => x.Contains(" ") ? $"\"{x}\"" : x))} )");
                     }
                     else criteriasFilter.Add(criteria.Contains(" ") ? $"\"{criteria}\"" : criteria);
                 }
-                filterQuery = $"{codeName}({string.Join(" OR ", criteriasFilter)})";
+
+                string joinedFilter = string.Join(" OR ", criteriasFilter.Where(x => !string.IsNullOrEmpty(x)));
+                if (!string.IsNullOrEmpty(joinedFilter))
+                {
+                    filterQuery = $"{codeName}( {joinedFilter} )";
+                }
             }
             else if (criterias.Contains("&"))
             {
-                filterQuery = $"{codeName}({string.Join(" AND ", criterias.Split('&').Select(x => x.Contains(" ") ? $"\"{x}\"" : x))})";
+                string joinedFilter = string.Join(" AND ", criterias.Split('&').Where(x => !string.IsNullOrEmpty(x)).Select(x => x.Contains(" ") ? $"\"{x}\"" : x));
+                if (!string.IsNullOrEmpty(joinedFilter))
+                {
+                    filterQuery = $"{codeName}( {joinedFilter} )";
+                }
             }
             else if (criterias.Contains("-"))
             {
                 string[] fromTo = criterias.Split("-");
-                filterQuery = $"{codeName}(>{fromTo[0]} AND <{fromTo[1]})";
+                if (fromTo.Length > 1)
+                {
+                    filterQuery = $"{codeName}( > {fromTo[0]} AND < {fromTo[1]} )";
+                }
             }
             else
             {
-                filterQuery = $"{codeName}({(criterias.Contains(" ") ? $"\"{criterias}\"" : criterias)})";
+                string joinedFilter = criterias.Contains(" ") ? $"\"{criterias}\"" : criterias;
+                if (!string.IsNullOrEmpty(joinedFilter))
+                {
+                    filterQuery = $"{codeName}( {joinedFilter} )";
+                }
             }
 
             return !string.IsNullOrEmpty(filterQuery);
@@ -159,8 +191,8 @@ namespace AffinOuterAPI.BLL.Services
             List<string> filterQuery = new List<string>();
             foreach (KeyValuePair<string, string> codeCriteria in new Dictionary<string, string>
                 {
-                    {"Srctitleplus", titles},
-                    {"tak", $"{topics}&{publishers}&{repositories}"},
+                    {"all", titles},
+                    {"key", $"{topics}|{publishers}|{repositories}"},
                     {"aut", authors},
                     {"abs", languages},
                     {"pub-date", years}

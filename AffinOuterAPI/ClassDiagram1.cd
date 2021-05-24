@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="AffinOuterAPI.Lambdas.BaseLambdaFunction">
+    <Position X="13" Y="8.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Lambdas\BaseLambdaFunction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AffinOuterAPI.Lambdas.GetArticlesCore2Function">
+    <Position X="8.75" Y="10" Width="2.75" />
+    <InheritanceLine Type="AffinOuterAPI.Lambdas.BaseLambdaFunction" ManuallyRouted="true">
+      <Path>
+        <Point X="14.375" Y="9.368" />
+        <Point X="14.375" Y="9.663" />
+        <Point X="10.125" Y="9.663" />
+        <Point X="10.125" Y="10" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAA=</HashCode>
+      <FileName>Lambdas\GetArticlesCore2Function.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Left" Position="0.1" />
+  </Class>
+  <Class Name="AffinOuterAPI.Lambdas.GetArticlesCoreFunction">
+    <Position X="13" Y="10" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAA=</HashCode>
+      <FileName>Lambdas\GetArticlesCoreFunction.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Left" Position="0.1" />
+  </Class>
+  <Class Name="AffinOuterAPI.Lambdas.GetArticlesScopusFunction">
+    <Position X="17.25" Y="10" Width="2.75" />
+    <InheritanceLine Type="AffinOuterAPI.Lambdas.BaseLambdaFunction" ManuallyRouted="true">
+      <Path>
+        <Point X="14.375" Y="9.368" />
+        <Point X="14.375" Y="9.712" />
+        <Point X="18.625" Y="9.712" />
+        <Point X="18.625" Y="10" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAA=</HashCode>
+      <FileName>Lambdas\GetArticlesScopusFunction.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Left" Position="0.112" />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Models.CoreArticle">
+    <Position X="19.5" Y="19.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Models.CoreSource">
+    <Position X="21.25" Y="14" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Models.Article">
+    <Position X="19.5" Y="17.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Models.ArticleHelper">
+    <Position X="8.5" Y="12" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Models.BaseArticle">
+    <Position X="17.75" Y="16.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Models.Filter">
+    <Position X="21.25" Y="19.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Models.Repository">
+    <Position X="21.25" Y="15.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Models.RepositoryDocument">
+    <Position X="21.25" Y="17.75" Width="1.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Models.Scopus.ScopusArticle">
+    <Position X="16" Y="20.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Models.Scopus.ScopusArticleAuthor">
+    <Position X="14" Y="21" Width="1.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Models.Scopus.ScopusArticleAuthorElement">
+    <Position X="17.75" Y="21.5" Width="3.25" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Requests.Core2Request">
+    <Position X="14" Y="16.75" Width="1.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Requests.CoreQuery">
+    <Position X="17.75" Y="12" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Requests.CoreFacetMap">
+    <Position X="17.75" Y="14.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Requests.BaseCoreFilter">
+    <Position X="19.5" Y="12" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Requests.CoreRepository">
+    <Position X="19.5" Y="14" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Requests.CoreLanguage">
+    <Position X="21.25" Y="12" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Requests.CoreYear">
+    <Position X="19.5" Y="15.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Requests.CoreRequest">
+    <Position X="14" Y="14.5" Width="1.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Requests.ScopusRequest">
+    <Position X="14" Y="18.75" Width="1.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Requests.BaseRequest">
+    <Position X="14" Y="12" Width="1.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Requests.RequestHelper">
+    <Position X="8.25" Y="13.5" Width="1.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Responses.Core2Response">
+    <Position X="16" Y="16.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Responses.CoreResponse">
+    <Position X="16" Y="14.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Responses.ScopusResponse">
+    <Position X="16" Y="18.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Responses.BaseResponse">
+    <Position X="16" Y="12" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AffinOuterAPI.Client.Responses.ResponseHelper">
+    <Position X="7.5" Y="15.5" Width="2.5" />
+    <TypeIdentifier />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
