@@ -174,7 +174,7 @@ namespace AffinOuterAPI.BLL.Services
                     ScopusResponse scopusResponse = ResponseHelper.ToScopusResponse(responseJson);
 
                     previousDataCount = data.Count;
-                    currentDataCount = scopusResponse?.entry?.Count ?? 0;
+                    currentDataCount = scopusResponse?.entry?.Count(x=>string.IsNullOrEmpty(x.error)) ?? 0;
                     if (scopusResponse != null)
                     {
                         scopusResponse.entry = scopusResponse.entry?.Where(x => !string.IsNullOrEmpty(x?.doi))?.ToList();

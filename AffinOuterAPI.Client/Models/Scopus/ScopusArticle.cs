@@ -22,6 +22,8 @@ namespace AffinOuterAPI.Client.Models.Scopus
         public DateTime? year { get; set; }
         [DataMember(Name = "prism:doi")]
         public string doi { get; set; }
+        [DataMember(Name = "error")]
+        public string error { get; set; }
         public string downloadUrl { get; set; }
     }
 
