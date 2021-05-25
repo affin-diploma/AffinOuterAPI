@@ -11,6 +11,8 @@ namespace AffinOuterAPI.Client.Models.Scopus
         public string id { get; set; }
         [DataMember(Name = "dc:title")]
         public string title { get; set; }
+        [DataMember(Name = "prism:publicationName")]
+        public string topic { get; set; }
         [DataMember(Name = "dc:creator")]
         public string publisher { get; set; }
         [DataMember(Name = "authors")]

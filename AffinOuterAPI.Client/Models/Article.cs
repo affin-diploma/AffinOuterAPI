@@ -52,6 +52,7 @@ namespace AffinOuterAPI.Client.Models
             {
                 doi = obj?.doi,
                 title = obj?.title,
+                topics = !string.IsNullOrEmpty(obj?.topic) ? new System.Collections.Generic.List<string> { obj?.topic } : null,
                 authors = obj?.authors != null && obj.authors.Any() ? obj.authors : null,
                 publisher = obj?.publisher,
                 downloadUrl = obj?.downloadUrl,

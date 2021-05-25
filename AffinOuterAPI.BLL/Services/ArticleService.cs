@@ -43,17 +43,16 @@ namespace AffinOuterAPI.BLL.Services
                     CoreResponse coreResponse = ResponseHelper.ToCoreResponse(responseJson);
 
                     previousDataCount = data.Count;
+                    currentDataCount = coreResponse?.data?.Count ?? 0;
                     if (coreResponse != null)
                     {
                         coreResponse.data = coreResponse.data?.Where(x =>
                             !string.IsNullOrEmpty(x?._source?.downloadUrl) &&
-                            !string.IsNullOrEmpty(x?._source?.deleted) && x._source.deleted != "DELETED" &&
-                            !string.IsNullOrEmpty(x?._source?.doi))?.ToList();
+                            !string.IsNullOrEmpty(x?._source?.deleted) && x._source.deleted != "DELETED")?.ToList();
                     }
 
                     data.AddRange(coreResponse.data ?? new List<CoreSource>());
                     data = data?.GroupBy(x => x._source.downloadUrl)?.Select(x => x.First())?.ToList() ?? new List<CoreSource>();
-                    currentDataCount = coreResponse?.data?.Count ?? 0;
 
                     if (request.limit.Value <= data.Count || currentDataCount == 0)
                     {
@@ -110,6 +109,7 @@ namespace AffinOuterAPI.BLL.Services
                     Core2Response coreResponse = ResponseHelper.ToCore2Response(responseJson);
 
                     previousDataCount = data.Count;
+                    currentDataCount = coreResponse?.results?.Count ?? 0;
                     if (coreResponse != null)
                     {
                         coreResponse.results = coreResponse.results?.Where(x =>
@@ -118,7 +118,6 @@ namespace AffinOuterAPI.BLL.Services
 
                     data.AddRange(coreResponse.results ?? new List<CoreArticle>());
                     data = data?.GroupBy(x => x.downloadUrl)?.Select(x => x.First())?.ToList() ?? new List<CoreArticle>();
-                    currentDataCount = coreResponse?.results?.Count ?? 0;
 
                     if (request.limit.Value <= data.Count || currentDataCount == 0)
                     {
@@ -175,6 +174,7 @@ namespace AffinOuterAPI.BLL.Services
                     ScopusResponse scopusResponse = ResponseHelper.ToScopusResponse(responseJson);
 
                     previousDataCount = data.Count;
+                    currentDataCount = scopusResponse?.entry?.Count ?? 0;
                     if (scopusResponse != null)
                     {
                         scopusResponse.entry = scopusResponse.entry?.Where(x => !string.IsNullOrEmpty(x?.doi))?.ToList();
@@ -182,7 +182,6 @@ namespace AffinOuterAPI.BLL.Services
 
                     data.AddRange(scopusResponse?.entry ?? new List<ScopusArticle>());
                     data = data?.GroupBy(x => x.doi)?.Select(x => x.First())?.ToList() ?? new List<ScopusArticle>();
-                    currentDataCount = scopusResponse?.entry?.Count ?? 0;
 
                     if (request.limit.Value <= data.Count || currentDataCount == 0)
                     {
